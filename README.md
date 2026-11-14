@@ -65,3 +65,11 @@ app/src/main/assets/         dialogues.json, scenarios/*.json
 scripts/                     시연용 주행 스크립트
 docs/                        신호 테스트, 팀 전달 문서
 ```
+
+## 이미지·리소스 출처
+
+| 리소스 | 출처 |
+|---|---|
+| 토토 캐릭터 (아기·청소년·성인 `avatar_stage0~2.png`), 꾸미기 파츠 (헬멧·새싹 `part_*.png`) | 팀 카소랩 자체 제작. 디자이너가 태블릿에 직접 그린 원화를 바탕으로, AI 도구 Claude(Anthropic)로 선과 색을 다듬었어요. Anthropic 이용약관에 따라 생성 결과물의 권리는 사용자에게 있어요. 얼굴의 타원형은 현대자동차 엠블럼의 타원 형태에서 아이디어를 얻은 자체 디자인이며, 실제 로고·상표는 사용하지 않았어요. |
+| 대사, 시나리오 (`dialogues.json`, `scenarios/*.json`) | 팀 카소랩 자체 작성 |
+| 차량 신호·음성 | Pleos Playground 공식 SDK (Vehicle 2.3.2, TextToSpeech 3.3.1) |
