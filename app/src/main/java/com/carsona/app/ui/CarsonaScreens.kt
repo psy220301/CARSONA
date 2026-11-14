@@ -222,10 +222,13 @@ private fun StageScope.NameTag(avatar: AvatarState) {
 }
 
 @Composable
-private fun StageScope.InfoPanel(content: @Composable ColumnScope.() -> Unit) {
+private fun StageScope.InfoPanel(
+    top: Float = PANEL_Y,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(
         Modifier
-            .offset(x(PANEL_X), y(PANEL_Y))
+            .offset(x(PANEL_X), y(top))
             .width(len(PANEL_W))
             .clip(RoundedCornerShape(28.dp))
             .background(Panel.copy(alpha = 0.88f))
@@ -234,6 +237,9 @@ private fun StageScope.InfoPanel(content: @Composable ColumnScope.() -> Unit) {
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) { content() }
 }
+
+/** 첫 만남 이름 카드: 말풍선·토토 머리 높이에 맞춰 "이름 지어줄래?" 바로 옆에 둔다 */
+private const val FIRST_MEET_PANEL_Y = 560f
 
 // ---------- 화면 4개 ----------
 
@@ -252,7 +258,7 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
     Stage("bg_default") {
         StageToto(AvatarState())
         SpeechBubble(line, stage = 0)
-        InfoPanel {
+        InfoPanel(top = FIRST_MEET_PANEL_Y) {
             Text("이름 짓기", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Light)
             Text("가족이 함께 불러 줄 이름을 지어 주세요", fontSize = 20.sp, color = Muted)
             OutlinedTextField(
