@@ -103,7 +103,7 @@ fun CarsonaApp(
         val lineKey = when (screen) {
             Screen.FIRST_MEET -> "birth"
             Screen.DRIVING -> "driving"
-            Screen.REVEAL -> ui.avatar.lastReveal.lineKey
+            Screen.REVEAL -> revealLineKey(ui.avatar)
             Screen.HOME -> ""
         }
         val line = remember(screen, ui.avatar.lastReveal) { dialogues.pick(lineKey) }
@@ -292,7 +292,7 @@ private fun ColumnScope.NameCardContent(
         onClick = submit,
         colors = ButtonDefaults.buttonColors(containerColor = Leaf, contentColor = Line),
         modifier = Modifier.fillMaxWidth().height(72.dp),
-    ) { Text("이름 짓기", fontSize = 26.sp, fontWeight = FontWeight.Bold) }
+    ) { Text("이 이름으로 할게요", fontSize = 26.sp, fontWeight = FontWeight.Bold) }
 }
 
 /** ② 홈: 토토 + 이름표 + 성장 막대 + 성향 4개 (기어 P일 때 기본 화면) */
@@ -387,7 +387,10 @@ private fun RevealScreen(ui: UiState, line: String, onClose: () -> Unit) {
                 Text("${name.withSubject()} ${avatar.stage.stageLabel}이 됐어요!", fontSize = 36.sp,
                     fontWeight = FontWeight.Bold, color = Accent)
             }
-            Text("오늘 성장 +${reveal.gained}!", fontSize = 60.sp, fontWeight = FontWeight.Bold, color = Light)
+            Text(
+                if (reveal.gained > 0) "이번 주행 성장 +${reveal.gained}!" else "이번엔 잠깐 다녀왔어요",
+                fontSize = 60.sp, fontWeight = FontWeight.Bold, color = Light,
+            )
         }
         InfoPanel {
             GrowthBar(avatar.stage, bar.value)
@@ -425,10 +428,32 @@ private fun growthFraction(stage: Int, growth: Int): Float =
     else (growth.toFloat() / AvatarState.STAGE_GOAL).coerceIn(0f, 1f)
 
 /** 이름 뒤 주격 조사: 받침이 있으면 "이", 없으면 "가" (예: 토토가, 별이) */
+/**
+ * 이름 뒤에 주격 조사(이/가)를 붙인다.
+ * - 한글: 받침 있으면 "이", 없으면 "가"
+ * - 영어: 모음(a e i o u y)으로 끝나면 "가", 아니면 "이" (Toto가, Tom이)
+ * - 숫자: 한국어로 읽은 소리 기준 (2·4·5·9 → "가", 나머지 → "이")
+ */
 private fun String.withSubject(): String {
-    val last = lastOrNull() ?: return this
-    val hasFinal = last in '가'..'힣' && (last.code - 0xAC00) % 28 != 0
+    val last = trimEnd().lastOrNull() ?: return this
+    val hasFinal = when (last) {
+        in '가'..'힣' -> (last.code - 0xAC00) % 28 != 0
+        in 'a'..'z', in 'A'..'Z' -> last.lowercaseChar() !in "aeiouy"
+        in '0'..'9' -> last !in "2459"
+        else -> false
+    }
     return this + if (hasFinal) "이" else "가"
+}
+
+/** 성장 공개 대사 키: 다 자란 뒤엔 "자랐어" 대신 reveal_adult, 성장 0이면 reveal_zero */
+private fun revealLineKey(avatar: AvatarState): String {
+    val reveal = avatar.lastReveal
+    return when {
+        reveal.stageUp -> reveal.lineKey
+        reveal.gained == 0 -> "reveal_zero"
+        avatar.stage >= AvatarState.MAX_STAGE -> "reveal_adult"
+        else -> reveal.lineKey
+    }
 }
 
 @Composable
@@ -476,7 +501,7 @@ private fun BoxCount(count: Int) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         GiftBox(Modifier.size(48.dp))
         Spacer(Modifier.width(14.dp))
-        Text(if (count > 0) "안 연 상자 ${count}개" else "아직 상자가 없어요", fontSize = 22.sp, color = Light)
+        Text(if (count > 0) "열지 않은 상자 ${count}개" else "아직 상자가 없어요", fontSize = 22.sp, color = Light)
     }
 }
 
