@@ -20,8 +20,8 @@
 | 에뮬레이터 | Pleos Connect Emulator **v2.1.0** (Android 14, API 34, x86_64) |
 | 화면 규격 | **2560 × 1440**, 160 dpi, 가로 |
 | 개발 도구 | Android Studio, Kotlin, Jetpack Compose |
-| SDK | minSdk 28, targetSdk 37, Pleos Vehicle SDK `ai.pleos.playground:Vehicle:2.3.2` |
-| 권한 | `pleos.car.permission.CAR_DRIVE`, `pleos.car.permission.CAR_LIGHTS` |
+| SDK | minSdk 28, targetSdk 37, Pleos Vehicle SDK `ai.pleos.playground:Vehicle:2.3.2`, Pleos TextToSpeech SDK `ai.pleos.playground:TextToSpeech:3.3.1` (ON_DEVICE) |
+| 권한 | `pleos.car.permission.CAR_DRIVE`, `pleos.car.permission.CAR_LIGHTS`, `pleos.car.permission.TTS_SERVICE` |
 
 ## 실행 방법
 
@@ -32,8 +32,9 @@
    - `adb forward tcp:8088 tcp:8088` 후 브라우저에서 `http://127.0.0.1:8088/` → Emulation Controls
    - 기어 **D** → 주행 중 화면 ("조용히 기록하고 있어요")
    - 주행거리(Odometer) 올리기, 방향지시등(Turn Signal) 켜기 → 성장치가 쌓여요 (화면에는 숫자를 보여주지 않아요)
-   - 기어 **P** → "오늘 성장 +N!" 공개, 상자, 대사. 기준을 넘으면 아기 → 청소년
-5. 한 번에 시연하려면 (Git Bash): `bash scripts/demo_trip.sh` — 주행 1회에 +29, 두 번이면 청소년이 돼요.
+   - 기어 **P** → "오늘 성장 +N!" 공개, 상자, 대사(화면 + 토토 목소리). 기준을 넘으면 아기 → 청소년 → 성인
+5. 빠른 시연: 홈 화면 오른쪽 위 **시나리오 재생** → 출퇴근 4회(회당 +14)가 자동 재생돼 청소년이 돼요. 한 번 더 누르면 성인.
+6. 실제 신호를 한 번에 보내려면 (Git Bash): `bash scripts/demo_trip.sh` — 기어 D → 28km·방향지시등 5회 → 기어 P, 주행 1회에 +29.
 
 자세한 신호 정보: [docs/signal-test.md](docs/signal-test.md)
 
@@ -46,7 +47,7 @@ Pleos Vehicle SDK (기어·방향지시등·주행거리)
    → CarsonaStore / 화면 : 첫 만남 · 홈 · 주행 중 · 성장 공개 (기어로 자동 전환)
 ```
 
-- 주행 중에는 소리·애니메이션·숫자 없이 한 줄만 보여줘요. 성장은 정차(P) 후에만 공개해요.
+- 주행 중에는 소리·애니메이션·숫자 없이 한 줄만 보여줘요. 성장과 토토 목소리는 정차(P) 후에만 나와요.
 - 서버 없이 차 안(앱 메모리)에만 저장해요.
 
 ## 폴더 구조

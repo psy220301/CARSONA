@@ -25,6 +25,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.CARSONA"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density"
             android:windowSoftInputMode="adjustResize">
             <!-- 주행 중 화면("조용히 기록하고 있어요")은 조작 없는 단순 표시라 주행 중 표시를 요청한다. -->
             <meta-data

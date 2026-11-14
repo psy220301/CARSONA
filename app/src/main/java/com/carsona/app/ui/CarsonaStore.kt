@@ -23,10 +23,16 @@ class CarsonaStore(private val engine: GrowthEngine) {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
-    fun onEvent(event: VehicleEvent) = _state.update { ui ->
+    /**
+     * 성장 계산(engine)은 주행 중 값을 내부에 쌓으므로 이벤트 하나에 정확히 한 번만 불러야 한다.
+     * (StateFlow.update 는 경합 시 블록을 다시 실행할 수 있어서 쓰지 않는다)
+     */
+    @Synchronized
+    fun onEvent(event: VehicleEvent) {
+        val ui = _state.value
         val before = ui.avatar
         val after = engine.onEvent(before, event)
-        when (event) {
+        _state.value = when (event) {
             is VehicleEvent.TripStart -> ui.copy(avatar = after, screen = Screen.DRIVING)
             VehicleEvent.Park -> ui.copy(
                 avatar = after,
@@ -38,9 +44,14 @@ class CarsonaStore(private val engine: GrowthEngine) {
     }
 
     /** 첫 만남: 이름을 지으면 홈으로 */
+    @Synchronized
     fun setName(name: String) = _state.update {
         it.copy(avatar = it.avatar.copy(name = name.trim().ifEmpty { "토토" }), screen = Screen.HOME)
     }
 
-    fun closeReveal() = _state.update { it.copy(screen = Screen.HOME) }
+    /** 공개 화면 닫기. 이름을 짓기 전에 주행했다면 첫 만남(이름 짓기)으로 돌아간다. */
+    @Synchronized
+    fun closeReveal() = _state.update {
+        it.copy(screen = if (it.avatar.name.isBlank()) Screen.FIRST_MEET else Screen.HOME)
+    }
 }

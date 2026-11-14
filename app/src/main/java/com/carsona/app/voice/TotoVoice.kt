@@ -28,7 +28,7 @@ class TotoVoice(context: Context) {
         override fun onDone() = Unit
         override fun onStop() = Unit
         override fun onUpdatedRms(rms: Double) = Unit
-        override fun onError(type: ErrorType) { Log.w(TAG, "TTS 오류: $type") }
+        override fun onError(errorType: ErrorType) { Log.w(TAG, "TTS 오류: $errorType") }
     }
 
     init {
@@ -47,7 +47,7 @@ class TotoVoice(context: Context) {
                 Log.i(TAG, "TTS 준비 완료 (ON_DEVICE)")
             }
 
-            override fun onFailure(type: ErrorType) { Log.w(TAG, "TTS 초기화 실패: $type") }
+            override fun onFailure(errorType: ErrorType) { Log.w(TAG, "TTS 초기화 실패: $errorType") }
         }) }.onFailure { Log.w(TAG, "TTS 초기화 실패: ${it.message}") }
     }
 

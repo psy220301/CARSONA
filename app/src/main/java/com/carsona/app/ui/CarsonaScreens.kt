@@ -189,7 +189,8 @@ private fun RevealScreen(ui: UiState, line: String, onClose: () -> Unit) {
             Spacer(Modifier.width(72.dp))
             Column(Modifier.weight(1f)) {
                 if (reveal.stageUp) {
-                    Text("${avatar.name}가 ${avatar.stage.stageLabel}이 됐어요!", fontSize = 44.sp,
+                    val name = avatar.name.ifBlank { "토토" }
+                    Text("${name.withSubject()} ${avatar.stage.stageLabel}이 됐어요!", fontSize = 44.sp,
                         fontWeight = FontWeight.Bold, color = Accent)
                     Spacer(Modifier.height(8.dp))
                 }
@@ -217,7 +218,7 @@ private fun RevealScreen(ui: UiState, line: String, onClose: () -> Unit) {
 
 @Composable
 private fun NameAndStage(avatar: AvatarState) {
-    Text(avatar.name, fontSize = 64.sp, fontWeight = FontWeight.Bold, color = Ink)
+    Text(avatar.name.ifBlank { "토토" }, fontSize = 64.sp, fontWeight = FontWeight.Bold, color = Ink)
     Text(avatar.stage.stageLabel, fontSize = 32.sp, color = Soft)
 }
 
@@ -232,6 +233,13 @@ private fun GrowthBar(stage: Int, fraction: Float) {
         color = Accent,
         trackColor = Track,
     )
+}
+
+/** 이름 뒤 주격 조사: 받침이 있으면 "이", 없으면 "가" (예: 토토가, 별이) */
+private fun String.withSubject(): String {
+    val last = lastOrNull() ?: return this
+    val hasFinal = last in '가'..'힣' && (last.code - 0xAC00) % 28 != 0
+    return this + if (hasFinal) "이" else "가"
 }
 
 private fun growthFraction(stage: Int, growth: Int): Float =

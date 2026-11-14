@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
         val dialogues = Dialogues.load(this)
 
         vehicle = PleosVehicleSource(this)
-        scenario = ScenarioVehicleSource(this)
+        // 주행 사이 간격: 성장 공개 화면과 토토 목소리가 끝까지 보이고 들리도록 4.5초
+        scenario = ScenarioVehicleSource(this, tripGapMs = 4500)
         lifecycleScope.launch { vehicle.events.collect { store.onEvent(it) } }
         lifecycleScope.launch { scenario.events.collect { store.onEvent(it) } }
         vehicle.start()
