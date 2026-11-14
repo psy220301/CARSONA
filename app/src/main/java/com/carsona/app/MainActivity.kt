@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
                     onCloseReveal = store::closeReveal,
                     onPlayScenario = if (hasScenario) ({ scenario.start() }) else null,
                     onSpeak = voice::speak,
+                    onEquip = store::equipHead,
                 )
             }
         }

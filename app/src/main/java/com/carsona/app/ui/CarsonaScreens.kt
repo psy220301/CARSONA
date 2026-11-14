@@ -83,6 +83,8 @@ fun CarsonaApp(
     onPlayScenario: (() -> Unit)? = null,
     /** 정차 후 성장 공개 화면에서 대사를 소리로 읽기 (주행 중에는 호출하지 않음) */
     onSpeak: (String) -> Unit = {},
+    /** 꾸미기: 머리 파츠 쓰기 (null = 벗기) */
+    onEquip: (String?) -> Unit = {},
 ) {
     AnimatedContent(
         targetState = ui.screen,
@@ -99,7 +101,7 @@ fun CarsonaApp(
         val line = remember(screen, ui.avatar.lastReveal) { dialogues.pick(lineKey) }
         when (screen) {
             Screen.FIRST_MEET -> FirstMeetScreen(line, onName)
-            Screen.HOME -> HomeScreen(ui.avatar, onPlayScenario)
+            Screen.HOME -> HomeScreen(ui.avatar, onPlayScenario, onEquip)
             Screen.DRIVING -> DrivingScreen(ui.avatar, line)
             Screen.REVEAL -> {
                 LaunchedEffect(ui.avatar.lastReveal) { onSpeak(line) }
@@ -174,9 +176,10 @@ private fun headTopY(stage: Int): Float {
 }
 
 @Composable
-private fun StageScope.SpeechBubble(text: String, stage: Int) {
+private fun StageScope.SpeechBubble(text: String, stage: Int, wearingHead: Boolean = false) {
     if (text.isBlank()) return
-    val bottom = headTopY(stage) - 24f
+    // 머리 파츠(헬멧·새싹)는 머리 위로 약 90px(캔버스) 올라오므로 그만큼 말풍선을 올린다
+    val bottom = headTopY(stage) - 24f - if (wearingHead) 100f else 0f
     Box(
         Modifier.place(250f, bottom - 140f, 1200f, 140f),
         contentAlignment = Alignment.BottomCenter,
@@ -258,7 +261,7 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
 
 /** ② 홈: 토토 + 이름표 + 성장 막대 + 성향 4개 (기어 P일 때 기본 화면) */
 @Composable
-private fun HomeScreen(avatar: AvatarState, onPlayScenario: (() -> Unit)?) {
+private fun HomeScreen(avatar: AvatarState, onPlayScenario: (() -> Unit)?, onEquip: (String?) -> Unit) {
     Stage("bg_default") {
         StageToto(avatar)
         NameTag(avatar)
@@ -269,6 +272,9 @@ private fun HomeScreen(avatar: AvatarState, onPlayScenario: (() -> Unit)?) {
             TendencyBars(avatar.tendency)
             Spacer(Modifier.height(8.dp))
             BoxCount(avatar.unopenedBox)
+            Spacer(Modifier.height(8.dp))
+            Text("꾸미기", fontSize = 22.sp, color = Muted)
+            DressUp(avatar.equipped.head, onEquip)
         }
         if (onPlayScenario != null) {
             TextButton(
@@ -309,7 +315,7 @@ private fun RevealScreen(ui: UiState, line: String, onClose: () -> Unit) {
     }
     Stage("bg_reveal") {
         StageToto(avatar)
-        SpeechBubble(line, avatar.stage)
+        SpeechBubble(line, avatar.stage, wearingHead = avatar.equipped.head != null)
         Column(
             Modifier.place(150f, 30f, 1000f, 190f),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -379,6 +385,26 @@ private fun TendencyBars(t: Tendency) {
                 Text("$value%", fontSize = 20.sp, color = Muted, textAlign = TextAlign.End,
                     modifier = Modifier.width(72.dp))
             }
+        }
+    }
+}
+
+/** 머리 파츠 고르기 (디자인 1 파츠: helmet, leaf). 고른 것은 밝은 초록으로 표시 */
+private val HEAD_PARTS = listOf(null to "없음", "helmet" to "헬멧", "leaf" to "새싹")
+
+@Composable
+private fun DressUp(current: String?, onEquip: (String?) -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+        HEAD_PARTS.forEach { (id, label) ->
+            val selected = current == id
+            Button(
+                onClick = { onEquip(id) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (selected) Leaf else Track,
+                    contentColor = if (selected) Line else Light,
+                ),
+                modifier = Modifier.weight(1f).height(56.dp),
+            ) { Text(label, fontSize = 20.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) }
         }
     }
 }

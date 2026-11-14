@@ -49,6 +49,12 @@ class CarsonaStore(private val engine: GrowthEngine) {
         it.copy(avatar = it.avatar.copy(name = name.trim().ifEmpty { "토토" }), screen = Screen.HOME)
     }
 
+    /** 꾸미기: 머리 파츠 쓰기/벗기 (null = 벗기). 정차 중 홈 화면에서만 부른다. */
+    @Synchronized
+    fun equipHead(head: String?) = _state.update {
+        it.copy(avatar = it.avatar.copy(equipped = it.avatar.equipped.copy(head = head)))
+    }
+
     /** 공개 화면 닫기. 이름을 짓기 전에 주행했다면 첫 만남(이름 짓기)으로 돌아간다. */
     @Synchronized
     fun closeReveal() = _state.update {
