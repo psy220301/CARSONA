@@ -73,6 +73,8 @@ fun CarsonaApp(
     onCloseReveal: () -> Unit,
     /** 테스트용 "시나리오 재생" 버튼. 시나리오 파일이 없으면 null (버튼 숨김) */
     onPlayScenario: (() -> Unit)? = null,
+    /** 정차 후 성장 공개 화면에서 대사를 소리로 읽기 (주행 중에는 호출하지 않음) */
+    onSpeak: (String) -> Unit = {},
 ) {
     AnimatedContent(
         targetState = ui.screen,
@@ -91,7 +93,10 @@ fun CarsonaApp(
             Screen.FIRST_MEET -> FirstMeetScreen(line, onName)
             Screen.HOME -> HomeScreen(ui.avatar, onPlayScenario)
             Screen.DRIVING -> DrivingScreen(ui.avatar, line)
-            Screen.REVEAL -> RevealScreen(ui, line, onCloseReveal)
+            Screen.REVEAL -> {
+                LaunchedEffect(ui.avatar.lastReveal) { onSpeak(line) }
+                RevealScreen(ui, line, onCloseReveal)
+            }
         }
     }
 }
