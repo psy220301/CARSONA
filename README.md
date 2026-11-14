@@ -49,7 +49,7 @@ Pleos Vehicle SDK (기어·방향지시등·주행거리)
    → CarsonaStore / 화면 : 첫 만남 · 홈 · 주행 중 · 성장 공개 (기어로 자동 전환)
 ```
 
-- 주행 중에는 소리·애니메이션·숫자 없이 한 줄만 보여줘요. 성장과 토토 목소리는 정차(P) 후에만 나와요.
+- 주행 중에는 소리·애니메이션·숫자 없이 짧은 문구만 보여줘요. 성장과 토토 목소리는 정차(P) 후에만 나와요.
 - 서버 없이 차 안(기기 저장소)에만 저장해요. 앱을 껐다 켜도 토토가 그대로 남아요.
 
 ## 폴더 구조
@@ -57,14 +57,21 @@ Pleos Vehicle SDK (기어·방향지시등·주행거리)
 ```
 app/src/main/java/com/carsona/app/
  ├─ vehicle/   차량 신호 → 이벤트 (VehicleDataSource, PleosVehicleSource)
- ├─ model/     아바타 상태 (공통 약속 1)
- ├─ growth/    성장 계산 (GrowthEngine)
+ ├─ model/     아바타 상태 (공통 약속 1), 기기 저장 (AvatarStorage)
+ ├─ growth/    성장 계산 (CarsonaGrowthEngine), 시나리오 재생 (ScenarioVehicleSource)
+ ├─ voice/     토토 목소리 (Pleos TextToSpeech, TotoVoice)
  └─ ui/        화면, 대사
 app/src/main/res/drawable/   avatar_stage0~2.png, bg_default.png, bg_reveal.png, part_*.png
 app/src/main/assets/         dialogues.json, scenarios/*.json
 scripts/                     시연용 주행 스크립트
-docs/                        신호 테스트, 팀 전달 문서
+docs/                        신호 테스트, 팀 전달 문서, 디자인 원본, 영상 썸네일
 ```
+
+## 알려진 제한 (1차 프로토타입)
+
+- 실제 차량 신호로는 기어·방향지시등·주행거리만 받아요. 목적지(성향 계산용)는 1차에서 "회사"로 고정하고, 부드러운 제동은 시나리오 재생에서만 반영해요. 내비게이션 목적지 연동과 제동 감지는 2차에서 붙일 예정이에요.
+- 기어를 D로 바꾸면 Pleos 시스템의 주행 카메라 화면이 잠깐 겹쳐 뜰 수 있어요. 앱이 아니라 차량 기본 기능이에요.
+- 홈 화면의 "시나리오 재생", "처음부터"는 심사·시연용 버튼이에요.
 
 ## 이미지·리소스 출처
 
@@ -72,6 +79,6 @@ docs/                        신호 테스트, 팀 전달 문서
 |---|---|
 | 토토 캐릭터 (아기·청소년·성인 `avatar_stage0~2.png`), 꾸미기 파츠 (헬멧·새싹 `part_*.png`) | 팀 카소랩 자체 제작. 디자이너가 태블릿에 직접 그린 원화를 바탕으로, AI 도구 Claude(Anthropic)로 선과 색을 다듬었어요. Anthropic 이용약관에 따라 생성 결과물의 권리는 사용자에게 있어요. 얼굴의 타원형은 현대자동차 엠블럼의 타원 형태에서 아이디어를 얻은 자체 디자인이며, 실제 로고·상표는 사용하지 않았어요. |
 | 배경 (밤하늘 `bg_default.png`, 성장 공개 `bg_reveal.png`) | 팀 카소랩 디자이너가 정한 배경 콘셉트(밤하늘, 언덕, 성장 순간의 빛줄기)를 AI 도구 Claude(Anthropic)에 설명해 생성한 이미지예요. Anthropic 이용약관에 따라 생성 결과물의 권리는 사용자에게 있어요. 다른 사람의 작품이나 로고·상표는 사용하지 않았어요. |
-| 시연 영상 썸네일 (`docs/images/thumbnail/`) | 위 토토·배경 이미지로 팀 카소랩이 직접 구성 |
+| 시연 영상 썸네일 (`docs/images/thumbnail/`) | 위 토토·배경 이미지로 팀 카소랩이 직접 구성. 글꼴은 Noto Sans KR (SIL Open Font License) |
 | 대사, 시나리오 (`dialogues.json`, `scenarios/*.json`) | 팀 카소랩 자체 작성 |
 | 차량 신호·음성 | Pleos Playground 공식 SDK (Vehicle 2.3.2, TextToSpeech 3.3.1) |

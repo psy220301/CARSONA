@@ -25,7 +25,7 @@ interface GrowthEngine {
 - 이벤트: `TripStart(destination)`, `TurnSignal`, `Distance(km)`, `SmoothBrake`, `Park`
 - 주행 중 이벤트에서는 화면용 값(`growth` 등)을 바꾸지 않고 이번 주행 값만 쌓아요. 주행 중 화면에는 숫자를 보여주지 않아요.
 - `Park`를 받으면 `growth`, `stage`, `tendency`, `unopenedBox`, `totalKm`, `lastReveal`을 갱신해서 돌려줘요. 화면은 그 직후 성장 공개 화면을 띄워요.
-- `lastReveal.lineKey`는 `stage_up` / `reveal_safe` / `reveal_normal` 중 하나예요. 화면이 `assets/dialogues.json`에서 문장을 골라요.
+- `lastReveal.lineKey`는 `stage_up` / `reveal_safe` / `reveal_normal` 중 하나예요. 화면이 `assets/dialogues.json`에서 문장을 골라요. 다만 다 자란 뒤(성인)에는 `reveal_adult`, 이번 성장이 0이면 `reveal_zero`를 화면이 대신 골라요.
 
 ## 시나리오 재생
 

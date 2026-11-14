@@ -1,7 +1,8 @@
-# 문서 (기획, 디자인 2)
+# 문서
 
-- 기획서 최종본, 영상 대본
-- `images/`: 화면 시안, 에뮬레이터 스크린샷, 영상 썸네일
+- `images/design1/`: 토토·꾸미기 파츠 원본과 배치 좌표 (디자인 1)
+- `images/design2/`: 배경 좌표와 꾸미기 미리보기 (디자인 2)
+- `images/thumbnail/`: 시연 영상 썸네일과 만드는 스크립트
 
 개발 문서
 - [signal-test.md](signal-test.md): 에뮬레이터 차량 신호 테스트 결과, Virtual Console 사용법
