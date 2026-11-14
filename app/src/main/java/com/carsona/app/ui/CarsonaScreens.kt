@@ -13,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,6 +66,8 @@ fun CarsonaApp(
     dialogues: Dialogues,
     onName: (String) -> Unit,
     onCloseReveal: () -> Unit,
+    /** 테스트용 "시나리오 재생" 버튼. 시나리오 파일이 없으면 null (버튼 숨김) */
+    onPlayScenario: (() -> Unit)? = null,
 ) {
     AnimatedContent(
         targetState = ui.screen,
@@ -80,7 +84,7 @@ fun CarsonaApp(
         val line = remember(screen, ui.avatar.lastReveal) { dialogues.pick(lineKey) }
         when (screen) {
             Screen.FIRST_MEET -> FirstMeetScreen(line, onName)
-            Screen.HOME -> HomeScreen(ui.avatar)
+            Screen.HOME -> HomeScreen(ui.avatar, onPlayScenario)
             Screen.DRIVING -> DrivingScreen(ui.avatar, line)
             Screen.REVEAL -> RevealScreen(ui, line, onCloseReveal)
         }
@@ -116,8 +120,14 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
 
 /** ② 홈: 토토 + 이름 + 성장 막대 + 성향 4개 (기어 P일 때 기본 화면) */
 @Composable
-private fun HomeScreen(avatar: AvatarState) {
+private fun HomeScreen(avatar: AvatarState, onPlayScenario: (() -> Unit)?) {
     Backdrop("bg_default", Paper) {
+        if (onPlayScenario != null) {
+            TextButton(
+                onClick = onPlayScenario,
+                modifier = Modifier.align(Alignment.TopEnd).padding(24.dp),
+            ) { Text("시나리오 재생", fontSize = 20.sp, color = Soft) }
+        }
         Row(Modifier.fillMaxSize().padding(64.dp), verticalAlignment = Alignment.CenterVertically) {
             Toto(avatar, 460.dp)
             Spacer(Modifier.width(72.dp))
@@ -255,7 +265,7 @@ private fun Context.drawableId(name: String): Int =
 
 /** 배경: res/drawable/bg_default.png, bg_reveal.png 가 있으면 깔고, 없으면 단색 */
 @Composable
-private fun Backdrop(name: String, fallback: Color, content: @Composable () -> Unit) {
+private fun Backdrop(name: String, fallback: Color, content: @Composable BoxScope.() -> Unit) {
     val id = LocalContext.current.drawableId(name)
     Box(Modifier.fillMaxSize().background(fallback)) {
         if (id != 0) {
