@@ -33,6 +33,8 @@ curl -X PUT "http://127.0.0.1:8088/vehicle/odometer?traveled_distance_km=12"
 curl -X PUT "http://127.0.0.1:8088/vehicle/gear?gear=Park"
 ```
 
+- Virtual Console은 브라우저 화면이 열려 있을 때만 신호를 받아요. 브라우저 없이 명령어만 쓰면 `{"error":"emulator_inactive"}`가 나와요. 이때는 `scripts/demo_trip.sh`처럼 `POST /browser/session?client=아무이름`을 1초마다 보내면 돼요.
+- 시연용 주행 1회: `bash scripts/demo_trip.sh` (+29 성장, 두 번 돌리면 청소년)
 - 기어 값: `Park`, `Reverse`, `Neutral`, `Drive`
 - 방향지시등 값: `Off`, `BlinkLeft`, `BlinkRight`, `FlashLeft`, `FlashRight`
 

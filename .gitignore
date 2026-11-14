@@ -22,3 +22,8 @@ Thumbs.db
 # Secrets
 *.env
 google-services.json
+keystore.properties
+
+# 공모전 제출용 APK는 apk/ 폴더에만 올린다
+!apk/
+!apk/*.apk
