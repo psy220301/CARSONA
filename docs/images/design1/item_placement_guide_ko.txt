@@ -1,0 +1,48 @@
+﻿카르소나 A안 · 아이템 배치 및 크기 변경
+
+1. 기본 렌더링
+   아기 stage0, 청소년 stage1, 성인 stage2에 대응하는 avatar_stageN.png를 사용한다.
+   기준 캔버스는 1024×1024px이며 원점은 좌상단이다. X는 오른쪽, Y는 아래로 증가한다.
+   기본 아바타에는 투명 여백이 포함된다. 아바타 이미지는 자르지 않고 (0, 0)에 그린다.
+
+2. 아이템 배치
+   helmet은 part_helmet.png, leaf는 part_leaf.png를 사용한다.
+   파츠 PNG에서 알파가 0보다 큰 픽셀을 모두 포함하는 최소 사각형을 구해 자른다.
+   이 사각형을 캐시해 재사용할 수 있다. 투명 여백이 포함된 1024px 전체 파츠 텍스처를
+   배치 사각형에 맞춰 축소하면 크기와 위치가 틀어진다.
+   placements.json[stageKey][itemKey]의 x, y, width, height는 잘라낸 파츠의 목적지
+   사각형이다. x, y는 파츠의 좌상단이며 width, height는 목적지 너비와 높이다.
+   자른 파츠를 목적지 크기로 리사이즈하고 (x, y)에 아바타 위로 알파 합성한다.
+   단계가 바뀌면 같은 아이템이라도 새 단계의 사각형을 다시 읽는다.
+
+   합성 순서: 기본 아바타 → 선택된 머리 아이템
+   기본값은 아이템 없음이다. 제공된 배치와 미리보기는 헬멧 또는 나뭇잎을 하나씩
+   착용하는 경우의 기준이다. 동시 착용은 별도 배치가 필요한 경우로 취급한다.
+
+3. 화면 크기가 바뀔 때
+   scale = min(viewWidth / 1024, viewHeight / 1024)
+   offsetX = (viewWidth - 1024 * scale) / 2
+   offsetY = (viewHeight - 1024 * scale) / 2
+   아바타와 아이템 모두 동일한 scale과 offset을 사용한다.
+   아이템 화면 사각형 = (offsetX + x * scale, offsetY + y * scale,
+                         width * scale, height * scale)
+   가로·세로에 서로 다른 배율을 적용하지 않는다. 배치 계산은 실수로 유지하고,
+   정수 좌표가 필요한 경우 최종 렌더링 단계에서만 반올림한다.
+
+4. 아이템 크기를 별도로 조정해야 할 때
+   기본 프리셋은 scaleFactor = 1이다. 추가 크기 조정을 구현할 경우 width와 height에
+   같은 양의 scaleFactor를 곱한다. 파츠 하단 중앙을 머리 부착 기준점으로 사용한다.
+   pivotX = x + width / 2
+   pivotY = y + height
+   newWidth = width * scaleFactor
+   newHeight = height * scaleFactor
+   newX = pivotX - newWidth / 2
+   newY = pivotY - newHeight
+   조정된 사각형을 화면 좌표로 변환하기 전에 적용한다. 허용 범위는 각 단계에서
+   캔버스 잘림, 눈 가림, 머리와의 맞물림을 확인한 후 정한다. 동봉된 검사는 1배 기준이다.
+
+5. 적용 확인
+   stage2 + helmet의 기준 사각형은 (274, 278, 475, 220)이다.
+   기준 배율에서 preview_stageN_helmet.png 또는 preview_stageN_leaf.png와 비교한다.
+   미리보기는 배치 검사용이다. 런타임에서는 기본 아바타와 파츠를 합성한다.
+   validation.json은 파일 및 기준 배치 검증 기록이며 실제 앱 렌더링 검증은 별도다.

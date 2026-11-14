@@ -1,0 +1,44 @@
+{
+  "stage0": {
+    "helmet": {
+      "x": 304,
+      "y": 518,
+      "width": 416,
+      "height": 193
+    },
+    "leaf": {
+      "x": 411,
+      "y": 527,
+      "width": 201,
+      "height": 82
+    }
+  },
+  "stage1": {
+    "helmet": {
+      "x": 289,
+      "y": 405,
+      "width": 445,
+      "height": 206
+    },
+    "leaf": {
+      "x": 404,
+      "y": 415,
+      "width": 215,
+      "height": 87
+    }
+  },
+  "stage2": {
+    "helmet": {
+      "x": 274,
+      "y": 278,
+      "width": 475,
+      "height": 220
+    },
+    "leaf": {
+      "x": 397,
+      "y": 288,
+      "width": 230,
+      "height": 93
+    }
+  }
+}

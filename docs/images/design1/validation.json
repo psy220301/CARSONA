@@ -1,0 +1,148 @@
+{
+  "assets": {
+    "avatar_stage0.png": {
+      "bytes": 85190,
+      "sha256": "26049c5f265b4e512de74aef000f1c6776a987334089fba1945130523d23d0de",
+      "alpha_bbox": [
+        312,
+        602,
+        712,
+        1000
+      ]
+    },
+    "part_helmet.png": {
+      "bytes": 217657,
+      "sha256": "5ab0d966cd084e460623d1d36194ea9d5b3b01db5944d5f2c36f5d5d7bb8505e",
+      "alpha_bbox": [
+        111,
+        326,
+        913,
+        698
+      ]
+    },
+    "part_leaf.png": {
+      "bytes": 58077,
+      "sha256": "409d520ff81c3991715712cce248555735080cace2a3320f42061e3b53ee7fac",
+      "alpha_bbox": [
+        337,
+        441,
+        687,
+        583
+      ]
+    },
+    "preview_stage0_helmet.png": {
+      "bytes": 152178,
+      "sha256": "1e91b3ad9a4e2258b2199342c546f8d7d866c7230eafcefc52dcf65825fb1c47",
+      "alpha_bbox": [
+        304,
+        518,
+        720,
+        1000
+      ]
+    },
+    "preview_stage0_leaf.png": {
+      "bytes": 107376,
+      "sha256": "b82325f527397a521c05de3d296b288236113a03e6754146bd0bc109f7759b86",
+      "alpha_bbox": [
+        312,
+        527,
+        712,
+        1000
+      ]
+    },
+    "avatar_stage1.png": {
+      "bytes": 112138,
+      "sha256": "de294b6cacd3ee519bf69dd50620e9a7434ccff28376370f149657339ecb26a0",
+      "alpha_bbox": [
+        298,
+        495,
+        726,
+        1000
+      ]
+    },
+    "preview_stage1_helmet.png": {
+      "bytes": 187614,
+      "sha256": "0616d2e8639346784394d2e97f42c703ee98efbbf3dfec84b9c4aa54f2c1c263",
+      "alpha_bbox": [
+        289,
+        405,
+        734,
+        1000
+      ]
+    },
+    "preview_stage1_leaf.png": {
+      "bytes": 136639,
+      "sha256": "2bf9ff73a6a24205071e5758e647870e440c9e1c01178b1b28896a37b8fc3fe8",
+      "alpha_bbox": [
+        298,
+        415,
+        726,
+        1000
+      ]
+    },
+    "avatar_stage2.png": {
+      "bytes": 152067,
+      "sha256": "56f405d8720cccad8c3380c19a3aff07120c3f11a66d9863a12d6d2bd7e0a738",
+      "alpha_bbox": [
+        284,
+        374,
+        740,
+        1000
+      ]
+    },
+    "preview_stage2_helmet.png": {
+      "bytes": 236407,
+      "sha256": "8a4d8f99684548334a2060ed5ad33570e130ac278782bab931aab39cef3b8588",
+      "alpha_bbox": [
+        274,
+        278,
+        749,
+        1000
+      ]
+    },
+    "preview_stage2_leaf.png": {
+      "bytes": 179253,
+      "sha256": "840045d12b737082db0624fda09697e98a56d719d9df562c81eafb503292c67e",
+      "alpha_bbox": [
+        284,
+        288,
+        740,
+        1000
+      ]
+    }
+  },
+  "growth": {
+    "stage0": {
+      "height_percent": 38.48,
+      "width_percent": 38.48,
+      "foot_baseline": 999,
+      "original_body_pixels_match_from_y": 800
+    },
+    "stage1": {
+      "height_percent": 48.93,
+      "width_percent": 41.21,
+      "foot_baseline": 999,
+      "original_body_pixels_match_from_y": 707
+    },
+    "stage2": {
+      "height_percent": 60.74,
+      "width_percent": 43.95,
+      "foot_baseline": 999,
+      "original_body_pixels_match_from_y": 600
+    }
+  },
+  "checks_passed": [
+    "1024x1024 PNG",
+    "RGBA with transparent margins",
+    "under 1000000 bytes each",
+    "common baseline",
+    "increasing heights",
+    "original body pixels below the neck preserved",
+    "Only the 22-row head-to-shoulder junction strip was modified in each base avatar."
+  ],
+  "notes": [
+    "Compact A head and unchanged bodies take priority over the older guide's size ratios.",
+    "Place each part using its cropped alpha bounds and the stage coordinates.",
+    "Helmet and leaf are shown as separate accessories. In-app rendering was not checked."
+  ]
+}

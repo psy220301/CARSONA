@@ -38,6 +38,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.wrapContentSize
+import org.json.JSONObject
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -275,22 +280,66 @@ private fun Backdrop(name: String, fallback: Color, content: @Composable BoxScop
     }
 }
 
-/** 토토: avatar_stage{stage}.png 위에 머리 파츠 part_{equipped.head}.png 를 같은 크기로 겹친다 */
+/**
+ * 토토 그리기 (디자인 1 item_placement_guide 기준)
+ * - 몸: avatar_stage{stage}.png, 1024×1024 캔버스. 3단계 모두 발 위치가 같다.
+ * - 머리 파츠: part_{equipped.head}.png (알파 영역만 잘라낸 이미지)를
+ *   assets/avatar/placements.json 의 단계별 사각형(1024 기준 x, y, width, height)에 그린다.
+ * - 캔버스 여백이 커서 토토가 작아 보이므로, 모든 단계·파츠를 포함하는 [VIEW] 영역만 확대해 보여준다.
+ */
 @Composable
 fun Toto(avatar: AvatarState, size: Dp) {
     val context = LocalContext.current
     val body = context.drawableId("avatar_stage${avatar.stage}")
-    Box(Modifier.size(size)) {
-        if (body != 0) {
+    if (body == 0) {
+        Box(Modifier.size(size)) { PlaceholderToto(avatar.stage) }
+        return
+    }
+    val placements = remember { AvatarPlacements.load(context) }
+    val unit = size / VIEW_SIZE  // 1024 캔버스의 1px 이 화면에서 차지하는 크기
+    Box(Modifier.size(size).clipToBounds()) {
+        Box(
+            Modifier
+                .wrapContentSize(Alignment.TopStart, unbounded = true)
+                .offset(-unit * VIEW_X, -unit * VIEW_Y)
+                .requiredSize(unit * 1024f)
+        ) {
             Image(painterResource(body), "토토 ${avatar.stage.stageLabel}", Modifier.fillMaxSize())
-        } else {
-            PlaceholderToto(avatar.stage)
-        }
-        avatar.equipped.head?.let { head ->
-            val part = context.drawableId("part_$head")
-            if (part != 0) Image(painterResource(part), null, Modifier.fillMaxSize())
+            val head = avatar.equipped.head
+            val rect = head?.let { placements["stage${avatar.stage}"]?.get(it) }
+            val part = head?.let { context.drawableId("part_$it") } ?: 0
+            if (rect != null && part != 0) {
+                Image(
+                    painterResource(part), null,
+                    Modifier.offset(unit * rect.x, unit * rect.y).requiredSize(unit * rect.w, unit * rect.h),
+                    contentScale = ContentScale.FillBounds,
+                )
+            }
         }
     }
+}
+
+/** 1024 캔버스에서 보여줄 영역: 성인+헬멧(y 278)부터 발(y 1000)까지, 가운데 정렬 */
+private const val VIEW_X = 137f
+private const val VIEW_Y = 262f
+private const val VIEW_SIZE = 750f
+
+private data class PartRect(val x: Float, val y: Float, val w: Float, val h: Float)
+
+private object AvatarPlacements {
+    fun load(context: Context): Map<String, Map<String, PartRect>> = runCatching {
+        val obj = JSONObject(context.assets.open("avatar/placements.json").bufferedReader().use { it.readText() })
+        obj.keys().asSequence().associateWith { stage ->
+            val items = obj.getJSONObject(stage)
+            items.keys().asSequence().associateWith { item ->
+                val r = items.getJSONObject(item)
+                PartRect(
+                    r.getDouble("x").toFloat(), r.getDouble("y").toFloat(),
+                    r.getDouble("width").toFloat(), r.getDouble("height").toFloat(),
+                )
+            }
+        }
+    }.getOrDefault(emptyMap())
 }
 
 @Composable
