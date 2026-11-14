@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -305,10 +306,25 @@ private fun HomeScreen(
             ) { Text("시나리오 재생", fontSize = 20.sp, color = Muted) }
         }
         if (onReset != null) {
+            // 실수로 눌러도 저장된 토토가 지워지지 않게 한 번 더 묻는다
+            var askReset by remember { mutableStateOf(false) }
             TextButton(
-                onClick = onReset,
+                onClick = { askReset = true },
                 modifier = Modifier.offset(x(1270f), y(36f)),
             ) { Text("처음부터", fontSize = 20.sp, color = Muted) }
+            if (askReset) {
+                AlertDialog(
+                    onDismissRequest = { askReset = false },
+                    title = { Text("처음부터 다시 할까요?", fontSize = 26.sp) },
+                    text = { Text("${avatar.name.withSubject()} 아기로 돌아가고, 지금까지의 성장은 지워져요.", fontSize = 20.sp) },
+                    confirmButton = {
+                        TextButton(onClick = { askReset = false; onReset() }) { Text("처음부터", fontSize = 20.sp) }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { askReset = false }) { Text("취소", fontSize = 20.sp) }
+                    },
+                )
+            }
         }
     }
 }

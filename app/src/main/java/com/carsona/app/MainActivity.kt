@@ -66,7 +66,8 @@ class MainActivity : ComponentActivity() {
                     onPlayScenario = if (hasScenario) ({ scenario.start() }) else null,
                     onSpeak = voice::speak,
                     onEquip = store::equipHead,
-                    onReset = if (hasScenario) store::reset else null,
+                    // 처음부터: 재생 중인 시나리오와 목소리도 멈춘 뒤 초기화
+                    onReset = if (hasScenario) ({ scenario.stop(); voice.stop(); store.reset() }) else null,
                 )
             }
         }
