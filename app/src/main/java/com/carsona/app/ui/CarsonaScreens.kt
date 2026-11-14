@@ -50,7 +50,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -85,6 +90,8 @@ fun CarsonaApp(
     onSpeak: (String) -> Unit = {},
     /** 꾸미기: 머리 파츠 쓰기 (null = 벗기) */
     onEquip: (String?) -> Unit = {},
+    /** 시연용 "처음부터" 버튼 (시나리오 버튼 옆). null 이면 숨김 */
+    onReset: (() -> Unit)? = null,
 ) {
     AnimatedContent(
         targetState = ui.screen,
@@ -101,7 +108,7 @@ fun CarsonaApp(
         val line = remember(screen, ui.avatar.lastReveal) { dialogues.pick(lineKey) }
         when (screen) {
             Screen.FIRST_MEET -> FirstMeetScreen(line, onName)
-            Screen.HOME -> HomeScreen(ui.avatar, onPlayScenario, onEquip)
+            Screen.HOME -> HomeScreen(ui.avatar, onPlayScenario, onEquip, onReset)
             Screen.DRIVING -> DrivingScreen(ui.avatar, line)
             Screen.REVEAL -> {
                 LaunchedEffect(ui.avatar.lastReveal) { onSpeak(line) }
@@ -233,6 +240,14 @@ private fun StageScope.InfoPanel(content: @Composable ColumnScope.() -> Unit) {
 @Composable
 private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
     var name by remember { mutableStateOf("토토") }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focus = LocalFocusManager.current
+    // 이름을 지으면 키보드를 닫고 홈으로
+    val submit = {
+        keyboard?.hide()
+        focus.clearFocus()
+        onName(name)
+    }
     Stage("bg_default") {
         StageToto(AvatarState())
         SpeechBubble(line, stage = 0)
@@ -248,10 +263,12 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
                     focusedTextColor = Light, unfocusedTextColor = Light, cursorColor = Light,
                     focusedBorderColor = Leaf, unfocusedBorderColor = Muted,
                 ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { submit() }),
                 modifier = Modifier.fillMaxWidth(),
             )
             Button(
-                onClick = { onName(name) },
+                onClick = submit,
                 colors = ButtonDefaults.buttonColors(containerColor = Leaf, contentColor = Line),
                 modifier = Modifier.fillMaxWidth().height(72.dp),
             ) { Text("이름 짓기", fontSize = 26.sp, fontWeight = FontWeight.Bold) }
@@ -261,7 +278,12 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
 
 /** ② 홈: 토토 + 이름표 + 성장 막대 + 성향 4개 (기어 P일 때 기본 화면) */
 @Composable
-private fun HomeScreen(avatar: AvatarState, onPlayScenario: (() -> Unit)?, onEquip: (String?) -> Unit) {
+private fun HomeScreen(
+    avatar: AvatarState,
+    onPlayScenario: (() -> Unit)?,
+    onEquip: (String?) -> Unit,
+    onReset: (() -> Unit)?,
+) {
     Stage("bg_default") {
         StageToto(avatar)
         NameTag(avatar)
@@ -281,6 +303,12 @@ private fun HomeScreen(avatar: AvatarState, onPlayScenario: (() -> Unit)?, onEqu
                 onClick = onPlayScenario,
                 modifier = Modifier.offset(x(1440f), y(36f)),
             ) { Text("시나리오 재생", fontSize = 20.sp, color = Muted) }
+        }
+        if (onReset != null) {
+            TextButton(
+                onClick = onReset,
+                modifier = Modifier.offset(x(1270f), y(36f)),
+            ) { Text("처음부터", fontSize = 20.sp, color = Muted) }
         }
     }
 }

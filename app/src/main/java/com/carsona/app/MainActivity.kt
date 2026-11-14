@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import com.carsona.app.growth.CarsonaGrowthEngine
+import com.carsona.app.model.AvatarStorage
 import com.carsona.app.growth.ScenarioVehicleSource
 import com.carsona.app.ui.CarsonaApp
 import com.carsona.app.ui.CarsonaStore
@@ -16,11 +17,15 @@ import com.carsona.app.ui.theme.CARSONATheme
 import com.carsona.app.vehicle.PleosVehicleSource
 import com.carsona.app.vehicle.VehicleDataSource
 import com.carsona.app.voice.TotoVoice
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     // 성장 계산: 개발 2의 CarsonaGrowthEngine
-    private val store = CarsonaStore(CarsonaGrowthEngine())
+    // 저장된 토토가 있으면 이어서 시작 (Context가 필요해서 onCreate 때 만든다)
+    private val storage by lazy { AvatarStorage(this) }
+    private val store by lazy { CarsonaStore(CarsonaGrowthEngine(), storage.load()) }
 
     // 실제 차량 신호와 시나리오 재생은 같은 이벤트를 내보내므로 화면은 출처를 신경 쓰지 않는다.
     private lateinit var vehicle: VehicleDataSource
@@ -34,6 +39,10 @@ class MainActivity : ComponentActivity() {
         vehicle = PleosVehicleSource(this)
         // 주행 사이 간격: 성장 공개 화면과 토토 목소리가 끝까지 보이고 들리도록 4.5초
         scenario = ScenarioVehicleSource(this, tripGapMs = 4500)
+        // 토토가 바뀔 때마다 저장
+        lifecycleScope.launch {
+            store.state.map { it.avatar }.distinctUntilChanged().collect { storage.save(it) }
+        }
         lifecycleScope.launch { vehicle.events.collect { store.onEvent(it) } }
         lifecycleScope.launch { scenario.events.collect { store.onEvent(it) } }
         vehicle.start()
@@ -57,6 +66,7 @@ class MainActivity : ComponentActivity() {
                     onPlayScenario = if (hasScenario) ({ scenario.start() }) else null,
                     onSpeak = voice::speak,
                     onEquip = store::equipHead,
+                    onReset = if (hasScenario) store::reset else null,
                 )
             }
         }

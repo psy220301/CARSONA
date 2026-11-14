@@ -19,8 +19,11 @@ data class UiState(
 )
 
 /** 개발 1: 화면 상태. 성장 계산은 [GrowthEngine](개발 2)에 맡기고 결과만 읽는다. */
-class CarsonaStore(private val engine: GrowthEngine) {
-    private val _state = MutableStateFlow(UiState())
+class CarsonaStore(private val engine: GrowthEngine, saved: AvatarState? = null) {
+    /** 저장된 토토가 있으면 바로 홈, 없으면 첫 만남 */
+    private val _state = MutableStateFlow(
+        if (saved != null) UiState(screen = Screen.HOME, avatar = saved) else UiState()
+    )
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     /**
@@ -53,6 +56,12 @@ class CarsonaStore(private val engine: GrowthEngine) {
     @Synchronized
     fun equipHead(head: String?) = _state.update {
         it.copy(avatar = it.avatar.copy(equipped = it.avatar.equipped.copy(head = head)))
+    }
+
+    /** 시연용: 토토를 처음 상태로 (첫 만남부터 다시) */
+    @Synchronized
+    fun reset() {
+        _state.value = UiState()
     }
 
     /** 공개 화면 닫기. 이름을 짓기 전에 주행했다면 첫 만남(이름 짓기)으로 돌아간다. */
