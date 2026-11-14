@@ -1,0 +1,29 @@
+{
+  "canvas": { "width": 1700, "height": 1200 },
+  "files": {
+    "bg_default": "bg_default.png",
+    "bg_reveal": "bg_reveal.png"
+  },
+  "avatar_anchor": {
+    "center_x": 850,
+    "foot_y": 1140,
+    "avatar_canvas_scale": 1.1,
+    "avatar_canvas_rect": { "x": 287, "y": 41, "width": 1126, "height": 1126 }
+  },
+  "ground": {
+    "front_ground_top_y_center": 930,
+    "front_ground_top_y_edges": 960
+  },
+  "bg_reveal": {
+    "glow_center": { "x": 850, "y": 700 },
+    "ring_radius": 440
+  },
+  "bg_default": {
+    "moon_center": { "x": 1420, "y": 210 },
+    "moon_glow_radius": 120
+  },
+  "ui_safe_zone": {
+    "top_band": { "x": 0, "y": 0, "width": 1700, "height": 200 },
+    "note": "위쪽 띠는 별만 있어 이름표·버튼을 올려도 됨. bg_default 오른쪽 위에는 달이 있음"
+  }
+}
