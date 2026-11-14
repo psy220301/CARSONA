@@ -1,0 +1,45 @@
+{
+  "name": "출퇴근 1주",
+  "trips": [
+    {
+      "destination": "office",
+      "events": [
+        { "type": "road", "value": "city", "km": 12 },
+        { "type": "turnSignal" },
+        { "type": "brake", "smooth": true, "speedKmh": 50 },
+        { "type": "turnSignal" },
+        { "type": "park" }
+      ]
+    },
+    {
+      "destination": "school",
+      "events": [
+        { "type": "road", "value": "city", "km": 12 },
+        { "type": "turnSignal" },
+        { "type": "brake", "smooth": true, "speedKmh": 50 },
+        { "type": "turnSignal" },
+        { "type": "park" }
+      ]
+    },
+    {
+      "destination": "office",
+      "events": [
+        { "type": "road", "value": "city", "km": 12 },
+        { "type": "turnSignal" },
+        { "type": "brake", "smooth": true, "speedKmh": 50 },
+        { "type": "turnSignal" },
+        { "type": "park" }
+      ]
+    },
+    {
+      "destination": "office",
+      "events": [
+        { "type": "road", "value": "city", "km": 12 },
+        { "type": "turnSignal" },
+        { "type": "brake", "smooth": true, "speedKmh": 50 },
+        { "type": "turnSignal" },
+        { "type": "park" }
+      ]
+    }
+  ]
+}
