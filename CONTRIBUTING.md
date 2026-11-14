@@ -1,67 +1,59 @@
-# 작업 규칙
+# 작업 규칙 (1차 제출까지)
 
-## 1. 브랜치
+한 줄 요약: **받고(Pull) → 작업하고 → 커밋하고 → 올린다(Push)**
 
-- `main`에는 직접 올리지 않아요. 항상 실행되는 상태로 유지해요.
-- 각자 자기 브랜치에서 작업해요.
+## 1. 팀 규칙
 
-| 담당 | 브랜치 이름 예시 |
-|---|---|
-| A | `a/screen-navigation`, `a/vehicle-sdk` |
-| B | `b/growth`, `b/scenario` |
-| C | `c/avatar-images` |
-| D | `d/lines` |
-| E | `e/scenarios` |
+1. 작업 시작 = Pull, 작업 끝 = Commit & Push
+2. 브랜치 없이 `main`에 바로 올려요. 대신 **자기 담당 폴더만** 수정해요 (충돌 예방)
+3. 커밋 메시지는 한글로 "무엇을 했는지" 써요 (예: `아기 토토 이미지 추가`)
+4. 한 번에 몰아서 말고 완성될 때마다 나눠서 커밋해요
+5. 비밀번호, 서명 키(`keystore.properties`, `*.jks`), Pleos Client ID·Secret은 절대 올리지 않아요
+6. 개발자는 Push 전에 에뮬레이터에서 앱이 실행되는지 확인해요
+7. 5명 모두 자기 계정으로 최소 1번 커밋해요 (제출 전 Insights → Contributors에서 확인)
 
-## 2. 올리는 순서
+## 2. 담당 폴더
 
-1. 작업을 시작하기 전에 최신 `main`을 받아요: `git pull origin main`
-2. 내 브랜치를 만들어요: `git checkout -b b/growth`
-3. 작업하고 커밋해요.
-4. GitHub에 올려요: `git push origin b/growth`
-5. GitHub에서 **Pull Request**를 만들어요.
-6. A가 확인하고 `main`에 합쳐요.
-
-## 3. 커밋 메시지
-
-`[담당] 무엇을 했는지` 형식으로 한 줄로 써요.
-
-- `[A] 홈 화면과 꾸미기 화면 연결`
-- `[B] 고속도로 주행 성장 계산 추가`
-- `[C] 아바타 기본 이미지 추가`
-- `[D] 첫 터널 대사 추가`
-- `[E] 출퇴근 1주 시나리오 추가`
-
-## 4. 파일 이름 규칙
-
-### 이미지 (C)
-
-소문자 영어와 밑줄(`_`)만 써요. 안드로이드는 대문자, 띄어쓰기, 한글 파일 이름을 쓸 수 없어요.
-
-| 종류 | 형식 | 예시 |
+| 역할 | 맡는 일 | 커밋하는 곳 |
 |---|---|---|
-| 아바타 기본 | `avatar_<상태>.png` | `avatar_baby.png` |
-| 무늬 | `pattern_<이름>_<번호>.png` | `pattern_stripe_01.png` |
-| 파츠 | `part_<슬롯>_<이름>.png` | `part_head_lantern.png` |
+| 개발 1 | 화면 4개, 차량 신호, 통합, GitHub, APK, README, 녹화 | `app/` 화면·차량 코드, `apk/`, `scripts/` |
+| 개발 2 | 성장·성향 계산, 시나리오 재생, (선택) TTS | `app/src/main/java/com/carsona/app/growth/` 등 로직 코드 |
+| 디자인 1 | 토토 3단계 그림, (선택) 파츠 1~2개 | `app/src/main/res/drawable/` |
+| 디자인 2 | 배경 2장, 영상 썸네일 | `app/src/main/res/drawable/`, `docs/images/` |
+| 기획 | 기획서, 대사, 시나리오, 영상 편집, 제출 | `docs/`, `app/src/main/assets/` |
 
-슬롯은 `head`, `body`, `acc`(액세서리) 세 가지예요.
+## 3. 파일 이름
 
-### 대사 (D)
+영어 소문자, 숫자, 밑줄(`_`)만 써요. 한글·대문자·띄어쓰기가 있으면 앱이 빌드되지 않아요.
 
-`app/src/main/assets/lines/lines.txt`에 한 줄에 하나씩 `키 = 대사` 형식으로 써요.
+| 파일 | 위치 | 내용 |
+|---|---|---|
+| `avatar_stage0.png` / `avatar_stage1.png` / `avatar_stage2.png` | `res/drawable/` | 아기 / 청소년 / 성인 토토. 1024×1024 투명 PNG, 3장 같은 위치 |
+| `part_helmet.png`, `part_leaf.png` | `res/drawable/` | (선택) 머리 파츠. 몸은 지우고 파츠만 |
+| `bg_default.png`, `bg_reveal.png` | `res/drawable/` | 홈·첫 만남 배경 / 성장 공개 배경 |
+| `dialogues.json` | `assets/` | 대사 (공통 약속 4) |
+| `scenarios/commute.json` | `assets/` | 시나리오 (공통 약속 3) |
+
+정해진 이름으로 올리면 코드 수정 없이 앱에 바로 나와요. 이름이 틀려도 괜찮으니 일단 올리고 개발 1에게 알려 주세요.
+
+## 4. 커밋하는 법
+
+### 디자인·기획 (웹사이트, 설치 없음)
+
+- 파일 올리기: 저장소에서 올릴 폴더로 이동 → 오른쪽 위 **Add file → Upload files** → 파일 끌어다 놓기 → 메시지 적고 **Commit changes**
+- 텍스트 고치기: 파일 클릭 → 연필 아이콘 → 수정 → **Commit changes**
+
+### 개발자 (Android Studio)
+
+1. 작업 시작 전: **Git → Pull**
+2. 작업 후: **Git → Commit** → 바뀐 파일 체크 → 메시지 → **Commit and Push**
+3. 처음 한 번: Git 이름은 실명 대신 **GitHub 아이디**로, 이메일은 GitHub 가입 이메일로 설정해요. 저장소를 공개하면 커밋 이름이 보이는데, 공모전 규정상 실명이 노출되면 안 돼요.
 
 ```
-first_tunnel = 터널 지나서 눈이 반짝이게 됐어!
-camping_arrive = 산 냄새 좋다! 다음에 또 오자
+git config --global user.name "깃허브아이디"
+git config --global user.email "깃허브가입이메일"
 ```
 
-키는 소문자 영어와 밑줄만 써요. 키 목록은 A와 B가 정해서 알려줘요.
+## 5. 충돌이 났을 때
 
-### 시나리오 (E)
-
-형식은 B가 `scenarios/example.csv`에 예시를 만들면 그대로 복사해서 채워요.
-
-## 5. 올리면 안 되는 것
-
-- 비밀번호, API 키, `local.properties`
-- `build/` 폴더 (자동으로 제외돼요)
+"conflict" 메시지가 나오면 더 진행하지 말고 단톡에 화면 캡처를 공유하고, 그 파일 담당자나 개발 1과 같이 봐요.
