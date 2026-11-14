@@ -135,15 +135,17 @@ private class StageScope(val unit: Float, val offX: Float, val offY: Float) {
 private const val BG_W = 1700f
 private const val BG_H = 1200f
 
-/** 아바타 1024 캔버스를 1.1배로 (287, 41)에 그리면 발이 언덕 위(y 1140), 가운데(x 850)에 선다 */
-private const val AVATAR_X = 287f
+/** 아바타 1024 캔버스를 1.1배로 그리면 발이 언덕 위(y 1140)에 선다.
+ *  토토 가운데 x: 화면 왼쪽에 토토, 오른쪽 옆에 카드·상태창 */
+private const val TOTO_CX = 600f
+private const val AVATAR_X = TOTO_CX - 1024f * 1.1f / 2
 private const val AVATAR_Y = 41f
 private const val AVATAR_SCALE = 1.1f
 
-/** 오른쪽 정보 패널 (토토 가로 범위 약 600~1100 바깥) */
-private const val PANEL_X = 1180f
+/** 토토 오른쪽 옆 정보 패널 (토토 가로 범위 약 330~880 바깥) */
+private const val PANEL_X = 960f
 private const val PANEL_Y = 350f   // 달(1420, 210, 빛 반지름 120) 아래
-private const val PANEL_W = 480f
+private const val PANEL_W = 520f
 
 @Composable
 private fun Stage(bg: String, content: @Composable StageScope.() -> Unit) {
@@ -189,7 +191,7 @@ private fun StageScope.SpeechBubble(text: String, stage: Int, wearingHead: Boole
     // 머리 파츠(헬멧·새싹)는 머리 위로 약 90px(캔버스) 올라오므로 그만큼 말풍선을 올린다
     val bottom = headTopY(stage) - 24f - if (wearingHead) 100f else 0f
     Box(
-        Modifier.place(250f, bottom - 140f, 1200f, 140f),
+        Modifier.place(TOTO_CX - 600f, bottom - 140f, 1200f, 140f),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Text(
@@ -254,47 +256,24 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
     }
     Stage("bg_default") {
         StageToto(AvatarState())
-        // 이름 카드 = 토토의 말풍선: 토토 머리 위 가운데, 꼬리가 토토를 가리킨다
-        val bottom = headTopY(0) - 16f
-        Column(
-            Modifier.place(NAME_CARD_X, 0f, NAME_CARD_W, bottom),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(28.dp))
-                    .background(Panel.copy(alpha = 0.92f))
-                    .border(2.dp, Track, RoundedCornerShape(28.dp))
-                    .padding(28.dp),
-                verticalArrangement = Arrangement.spacedBy(18.dp),
-            ) {
-                NameCardContent(line, name, { name = it.take(10) }, submit)
-            }
-            Canvas(Modifier.size(36.dp, 20.dp)) {
-                val path = androidx.compose.ui.graphics.Path().apply {
-                    moveTo(0f, 0f); lineTo(size.width, 0f); lineTo(size.width / 2, size.height); close()
-                }
-                drawPath(path, Panel.copy(alpha = 0.92f))
-            }
+        SpeechBubble(line, stage = 0)
+        // 이름 카드: 토토 오른쪽 옆, 토토 머리 높이
+        InfoPanel(top = FIRST_MEET_PANEL_Y) {
+            NameCardContent(name, { name = it.take(10) }, submit)
         }
     }
 }
 
-/** 첫 만남 이름 카드 너비·위치 (배경 좌표, 가운데 x 850) */
-private const val NAME_CARD_W = 680f
-private const val NAME_CARD_X = 850f - NAME_CARD_W / 2
+/** 첫 만남 이름 카드 위쪽 y (키보드가 열려도 카드 전체가 보이는 높이) */
+private const val FIRST_MEET_PANEL_Y = 480f
 
 @Composable
 private fun ColumnScope.NameCardContent(
-    line: String,
     name: String,
     onChange: (String) -> Unit,
     submit: () -> Unit,
 ) {
-    Text(line.ifBlank { "안녕! 나 방금 태어났어. 이름 지어줄래?" },
-        fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Light)
+    Text("이름 짓기", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Light)
     Text("가족이 함께 불러 줄 이름을 지어 주세요", fontSize = 20.sp, color = Muted)
     OutlinedTextField(
         value = name,
@@ -400,7 +379,7 @@ private fun RevealScreen(ui: UiState, line: String, onClose: () -> Unit) {
         StageToto(avatar)
         SpeechBubble(line, avatar.stage, wearingHead = avatar.equipped.head != null)
         Column(
-            Modifier.place(150f, 30f, 1000f, 190f),
+            Modifier.place(0f, 90f, BG_W, 200f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (reveal.stageUp) {
