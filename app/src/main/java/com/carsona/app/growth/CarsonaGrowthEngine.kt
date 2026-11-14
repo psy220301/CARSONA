@@ -8,7 +8,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
- * 개발 2 성장 로직. TempGrowthEngine 을 대체한다. (팀 가이드 5장 규칙)
+ * 개발 2 성장 로직 (팀 가이드 5장 규칙)
  */
 class CarsonaGrowthEngine : GrowthEngine {
 
