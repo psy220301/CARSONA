@@ -238,9 +238,6 @@ private fun StageScope.InfoPanel(
     ) { content() }
 }
 
-/** 첫 만남 이름 카드: 말풍선·토토 머리 높이에 맞춰 "이름 지어줄래?" 바로 옆에 둔다 */
-private const val FIRST_MEET_PANEL_Y = 560f
-
 // ---------- 화면 4개 ----------
 
 /** ① 첫 만남: 아기 토토가 태어나고 이름을 짓는다 (정차 중) */
@@ -257,30 +254,66 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
     }
     Stage("bg_default") {
         StageToto(AvatarState())
-        SpeechBubble(line, stage = 0)
-        InfoPanel(top = FIRST_MEET_PANEL_Y) {
-            Text("이름 짓기", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Light)
-            Text("가족이 함께 불러 줄 이름을 지어 주세요", fontSize = 20.sp, color = Muted)
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it.take(10) },
-                singleLine = true,
-                textStyle = TextStyle(fontSize = 30.sp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Light, unfocusedTextColor = Light, cursorColor = Light,
-                    focusedBorderColor = Leaf, unfocusedBorderColor = Muted,
-                ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { submit() }),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Button(
-                onClick = submit,
-                colors = ButtonDefaults.buttonColors(containerColor = Leaf, contentColor = Line),
-                modifier = Modifier.fillMaxWidth().height(72.dp),
-            ) { Text("이름 짓기", fontSize = 26.sp, fontWeight = FontWeight.Bold) }
+        // 이름 카드 = 토토의 말풍선: 토토 머리 위 가운데, 꼬리가 토토를 가리킨다
+        val bottom = headTopY(0) - 16f
+        Column(
+            Modifier.place(NAME_CARD_X, 0f, NAME_CARD_W, bottom),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(28.dp))
+                    .background(Panel.copy(alpha = 0.92f))
+                    .border(2.dp, Track, RoundedCornerShape(28.dp))
+                    .padding(28.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp),
+            ) {
+                NameCardContent(line, name, { name = it.take(10) }, submit)
+            }
+            Canvas(Modifier.size(36.dp, 20.dp)) {
+                val path = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(0f, 0f); lineTo(size.width, 0f); lineTo(size.width / 2, size.height); close()
+                }
+                drawPath(path, Panel.copy(alpha = 0.92f))
+            }
         }
     }
+}
+
+/** 첫 만남 이름 카드 너비·위치 (배경 좌표, 가운데 x 850) */
+private const val NAME_CARD_W = 680f
+private const val NAME_CARD_X = 850f - NAME_CARD_W / 2
+
+@Composable
+private fun ColumnScope.NameCardContent(
+    line: String,
+    name: String,
+    onChange: (String) -> Unit,
+    submit: () -> Unit,
+) {
+    Text(line.ifBlank { "안녕! 나 방금 태어났어. 이름 지어줄래?" },
+        fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Light)
+    Text("가족이 함께 불러 줄 이름을 지어 주세요", fontSize = 20.sp, color = Muted)
+    OutlinedTextField(
+        value = name,
+        onValueChange = onChange,
+        singleLine = true,
+        textStyle = TextStyle(fontSize = 30.sp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Light, unfocusedTextColor = Light, cursorColor = Light,
+            focusedBorderColor = Leaf, unfocusedBorderColor = Muted,
+        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { submit() }),
+        modifier = Modifier.fillMaxWidth(),
+    )
+    Button(
+        onClick = submit,
+        colors = ButtonDefaults.buttonColors(containerColor = Leaf, contentColor = Line),
+        modifier = Modifier.fillMaxWidth().height(72.dp),
+    ) { Text("이름 짓기", fontSize = 26.sp, fontWeight = FontWeight.Bold) }
 }
 
 /** ② 홈: 토토 + 이름표 + 성장 막대 + 성향 4개 (기어 P일 때 기본 화면) */
