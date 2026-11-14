@@ -2,7 +2,7 @@
 
 **평소처럼 차를 타기만 하면, 우리 가족이 자주 가는 곳과 안전 운전 습관을 닮아 자라는 차량 아바타 '토토'**
 
-현대자동차그룹 차량용 앱 개발 공모전 출품작 · Pleos Connect (Android Automotive OS)
+현대자동차그룹 차량용 앱 개발 공모전 출품작 · 팀 **카소랩 (CarsoLab)** · Pleos Connect (Android Automotive OS)
 
 ## 시연 영상
 
@@ -10,7 +10,7 @@
 
 ## APK
 
-- 위치: [`apk/`](apk/) 폴더의 `팀명_CARSONA_release.apk`
+- 위치: [`apk/CarsoLab_CARSONA_release.apk`](apk/CarsoLab_CARSONA_release.apk)
 - 직접 만들기: `./gradlew :app:packageContestApk` (서명 키 `keystore.properties`가 있어야 release 서명이 돼요)
 
 ## 테스트 환경
@@ -26,7 +26,7 @@
 ## 실행 방법
 
 1. Pleos Connect Emulator v2.1.0을 실행해요.
-2. APK를 설치하고 실행해요: `adb install -r apk/팀명_CARSONA_release.apk`
+2. APK를 설치하고 실행해요: `adb install -r apk/CarsoLab_CARSONA_release.apk`
 3. 첫 화면에서 아바타 이름을 지어요.
 4. 차량 신호는 **Pleos Connect Virtual Console**로 바꿔요.
    - `adb forward tcp:8088 tcp:8088` 후 브라우저에서 `http://127.0.0.1:8088/` → Emulation Controls
