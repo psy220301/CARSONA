@@ -144,7 +144,7 @@ private const val AVATAR_SCALE = 1.1f
 
 /** 토토 오른쪽 옆 정보 패널 (토토 가로 범위 약 330~880 바깥) */
 private const val PANEL_X = 960f
-private const val PANEL_Y = 350f   // 달(1420, 210, 빛 반지름 120) 아래
+private const val PANEL_Y = 470f   // 토토 몸 높이에 맞춤 (달 아래)
 private const val PANEL_W = 520f
 
 @Composable
@@ -265,7 +265,7 @@ private fun FirstMeetScreen(line: String, onName: (String) -> Unit) {
 }
 
 /** 첫 만남 이름 카드 위쪽 y (키보드가 열려도 카드 전체가 보이는 높이) */
-private const val FIRST_MEET_PANEL_Y = 480f
+private const val FIRST_MEET_PANEL_Y = 610f
 
 @Composable
 private fun ColumnScope.NameCardContent(
