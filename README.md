@@ -92,3 +92,4 @@ docs/                        신호 테스트, 팀 전달 문서, 디자인 원�
 | 시연 영상 썸네일 (`docs/images/thumbnail/`) | 위 토토·배경 이미지로 팀 카소랩이 직접 구성. 글꼴은 Noto Sans KR (SIL Open Font License) |
 | 대사, 시나리오 (`dialogues.json`, `scenarios/*.json`) | 팀 카소랩 자체 작성 |
 | 차량 신호·음성 | Pleos Playground 공식 SDK (Vehicle 2.3.2, TextToSpeech 3.3.1) |
+| 오픈소스 라이브러리 | Android Jetpack (AndroidX Core·Activity·Lifecycle, Jetpack Compose, Material 3), Kotlin 표준 라이브러리, Gradle Wrapper — 모두 Apache License 2.0. 라이선스 원문: https://www.apache.org/licenses/LICENSE-2.0 |
