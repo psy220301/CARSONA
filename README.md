@@ -8,6 +8,16 @@
 
 (영상 링크를 넣어 주세요)
 
+## 화면 (1차 프로토타입, Pleos Connect 에뮬레이터)
+
+| 첫 만남 | 주행 중 (기어 D) |
+|---|---|
+| ![첫 만남](docs/images/screens/01_first_meet.jpg) | ![주행 중](docs/images/screens/02_driving.jpg) |
+| **정차 후 성장 공개 (기어 P)** | **홈: 성장·성향·상자·꾸미기** |
+| ![성장 공개](docs/images/screens/03_reveal.jpg) | ![홈](docs/images/screens/04_home.jpg) |
+
+앱 구조와 SDK 사용: [docs/images/screens/architecture.png](docs/images/screens/architecture.png)
+
 ## APK
 
 - 위치: [`apk/CarsoLab_CARSONA_release.apk`](apk/CarsoLab_CARSONA_release.apk)
