@@ -6,7 +6,7 @@
 
 ## 시연 영상
 
-(영상 링크를 넣어 주세요)
+[CARSONA 1차 프로토타입 시연 (YouTube, 1분 18초)](https://youtu.be/a2fo9NzKwLU) — 첫 만남 → 꾸미기 → 출퇴근 주행 → 청소년 → 성인
 
 ## 화면 (1차 프로토타입, Pleos Connect 에뮬레이터)
 
